@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run example.py",
+			"type": "shell",
+			"command": "python bashrunner/example.py",
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		}
+	]
+}
