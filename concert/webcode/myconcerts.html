@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homepage</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+  <a class="brand" href="homepage.html" aria-label="Go to homepage">Concert.videos</a>
+      <form class="search" role="search" onsubmit="performSearch(event)">
+        <input id="q" type="search" placeholder="Search my concerts..." aria-label="Search">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <h2 class="rainbow">My Concerts</h2>
+    <nav class="toc" aria-label="My concerts list">
+      <a class="card" href="9-19-25-Chris-Stussy-Chicago-at-Radius.html">
+        <div class="icon concerts">9/19</div>
+        <div class="meta">
+          <div class="title">9-19-25 Chris Stussy — Radius</div>
+          <div class="desc">Chicago — Radius — view details and media.</div>
+        </div>
+      </a>
+
+      <a class="card" href="10-24-25-Freddie-Gibbs-Chicago-at-Aragon-Ballroom.html">
+        <div class="icon concerts">10/24</div>
+        <div class="meta">
+          <div class="title">10-24-25 Freddie Gibbs — Aragon Ballroom</div>
+          <div class="desc">Chicago — Aragon Ballroom — view details and media.</div>
+        </div>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    function performSearch(e){
+      e.preventDefault();
+      const q = document.getElementById('q').value.trim();
+      if(!q){ alert('Please enter a search term.'); return; }
+      // Placeholder behavior - integrate with your app backend or client-side logic
+      alert('Search: ' + q);
+    }
+  </script>
+</body>
+</html>

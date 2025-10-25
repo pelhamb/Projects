@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homepage</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+  <a class="brand" href="homepage.html" aria-label="Go to homepage">Concert.videos</a>
+      <form class="search" role="search" onsubmit="performSearch(event)">
+        <input id="q" type="search" placeholder="Search concerts, artists, dates..." aria-label="Search">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+  <h2 class="rainbow">Features</h2>
+    <nav class="toc" aria-label="Main navigation">
+      <a class="card" href="#account">
+        <div class="icon account">A</div>
+        <div class="meta">
+          <div class="title">My Account</div>
+          <div class="desc">Profile, settings, and saved concerts.</div>
+        </div>
+      </a>
+
+      <a class="card" href="myconcerts.html">
+        <div class="icon concerts">C</div>
+        <div class="meta">
+          <div class="title">My Concerts</div>
+          <div class="desc">Upcoming and past concerts.</div>
+        </div>
+      </a>
+
+      <a class="card" href="#browse">
+        <div class="icon browse">B</div>
+        <div class="meta">
+          <div class="title">Browse</div>
+          <div class="desc">Explore by venue, artist, or date.</div>
+        </div>
+      </a>
+    </nav>
+
+    <div class="footer">Tip: Use the search above to quickly find concerts.</div>
+  </div>
+
+  <script>
+    function performSearch(e){
+      e.preventDefault();
+      const q = document.getElementById('q').value.trim();
+      if(!q){ alert('Please enter a search term.'); return; }
+      // Placeholder behavior - integrate with your app backend or client-side logic
+      alert('Search: ' + q);
+    }
+  </script>
+</body>
+</html>
