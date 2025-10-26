@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Player</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#111;color:#eee;padding:20px}
+    .player{max-width:900px;margin:18px auto}
+    .notice{color:#ddd;margin-top:12px}
+    a.download{display:inline-block;margin-top:8px;color:#bcd}
+  </style>
+</head>
+<body>
+  <div class="player">
+    <a class="brand" href="homepage.html">Concert.videos</a>
+    <h2 id="title">Video</h2>
+    <div id="player-wrap">Loading…</div>
+    <div class="notice">If the browser can't play this file you can download it using the link below and open it in a native player (QuickTime, VLC).</div>
+  </div>
+
+  <script>
+    function qs(name){
+      const p = new URLSearchParams(window.location.search);
+      return p.get(name);
+    }
+
+    const src = qs('video');
+    const wrap = document.getElementById('player-wrap');
+    const titleEl = document.getElementById('title');
+    if(!src){
+      wrap.innerHTML = '<p>No video specified. Use ?video=URL</p>';
+    } else {
+      // The parameter is expected to be URI encoded. Use decodeURIComponent
+      const url = decodeURIComponent(src);
+      titleEl.textContent = url.split('/').pop();
+
+      // Create a <video> element and a download link fallback
+      const v = document.createElement('video');
+      v.controls = true;
+      v.style.width = '100%';
+      v.crossOrigin = 'anonymous';
+
+      const source = document.createElement('source');
+      source.src = url;
+      // we don't set type so the browser decides; if needed you can set 'video/quicktime'
+      v.appendChild(source);
+
+      // Add a small note for users whose browsers don't support .mov codecs
+      const note = document.createElement('div');
+      note.className = 'notice';
+      note.textContent = "If playback fails, download and open with a native player (e.g. VLC or QuickTime).";
+
+      const dl = document.createElement('a');
+      dl.className = 'download';
+      dl.href = url;
+      dl.download = '';
+      dl.textContent = 'Download video file';
+
+      wrap.innerHTML = '';
+      wrap.appendChild(v);
+      wrap.appendChild(note);
+      wrap.appendChild(dl);
+
+      // try to load; any playback errors will show in the console
+      v.addEventListener('error', (e)=>{
+        console.warn('Video element error', e);
+      });
+    }
+  </script>
+</body>
+</html>

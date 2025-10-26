@@ -13,7 +13,7 @@ body{
   padding:36px 18px;
   box-sizing:border-box;
 }
-.container{width:100%;max-width:1100px}
+.container { width: 100%; max-width: 1100px; margin: 0 auto; }
 .header{display:flex;align-items:center;gap:18px;justify-content:space-between;margin-bottom:28px}
 .brand{font-weight:700;font-size:1.05rem;color:#111;display:inline-block;padding:8px 14px;border-radius:10px;text-decoration:none;background:linear-gradient(90deg,#ff5f6d 0%,#ffc371 20%,#f6d365 38%,#84fab0 58%,#8fd3f4 76%,#a18cd1 100%);box-shadow:0 6px 18px rgba(0,0,0,0.4);transition:transform .12s ease,filter .12s ease}
 .brand:hover{transform:translateY(-3px);filter:brightness(1.03)}
@@ -26,6 +26,8 @@ h2.rainbow{margin:0 0 14px 0;padding:0;font-size:1.1rem;letter-spacing:0.6px;bac
 .card{display:flex;gap:16px;align-items:center;padding:22px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.03));box-shadow:0 6px 18px rgba(0,0,0,0.6);text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease}
 .card:hover{transform:translateY(-6px);box-shadow:0 14px 32px rgba(0,0,0,0.7)}
 .icon{width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#111;font-size:1.4rem}
+.cover-thumb{width:84px;height:84px;border-radius:10px;object-fit:cover;display:block;box-shadow:0 6px 14px rgba(0,0,0,0.45)}
+.page-cover{width:160px;height:160px;border-radius:12px;object-fit:cover;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.5);margin-right:12px}
 .icon.account{background:linear-gradient(90deg,#ff5f6d,#ffc371)}
 .icon.concerts{background:linear-gradient(90deg,#f6d365,#fda085)}
 .icon.browse{background:linear-gradient(90deg,#84fab0,#8fd3f4)}
@@ -47,3 +49,98 @@ h2.rainbow{margin:0 0 14px 0;padding:0;font-size:1.1rem;letter-spacing:0.6px;bac
 .brand{...}
 .header{display:flex;align-items:center;gap:18px;justify-content:space-between;margin-bottom:28px}
 */
+
+/* Small nav button used on concert pages to go back to My Concerts */
+.nav-button{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);color:#fff;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 12px rgba(0,0,0,0.35)}
+.nav-button:hover{filter:brightness(1.05);transform:translateY(-1px)}
+
+/* Timeline visual styles */
+.timeline{margin-top:18px;background:rgba(255,255,255,0.03);height:48px;border-radius:8px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+.timeline .segment{position:absolute;top:0;height:100%;border-right:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.timeline .ticks{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.85rem;color:#cfcfcf}
+/* ticks container when placed outside the .timeline element */
+.ticks{display:flex;justify-content:space-between;margin-bottom:9px;font-size:0.85rem;color:#cfcfcf;width:100%;box-sizing:border-box;padding:0 4px}
+
+/* Player centering + responsive sizing */
+.player-wrap{
+  display:flex;
+  justify-content:center; /* always center horizontally */
+  align-items:center;
+  width:100%;
+  box-sizing:border-box;
+  padding:12px 0;
+}
+.video-player{
+  width:100%;
+  max-width:1300px;      /* cap at desktop size; tightened per request */
+  /* reduce the max height slightly (50px less than before) */
+  max-height: calc(80vh + 50px);
+  aspect-ratio:16/9;     /* keep consistent shape */
+  background:#000;
+  object-fit:contain;    /* letterbox inside area, no layout jumps */
+  border-radius:6px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+@media (max-width:480px){
+  .video-player{ max-height:60vh; }
+}
+
+/* Breakout container: let children span the full viewport width while
+   remaining centered visually. Use this on sections (timeline+player)
+   that should ignore the main `.container` max-width. */
+.breakout{
+  position:relative;
+  left:50%;
+  right:50%;
+  margin-left:-50vw;
+  margin-right:-50vw;
+  width:100vw;
+  box-sizing:border-box;
+  /* add horizontal padding to create buffer from viewport edges */
+  padding:12px 48px;
+}
+
+/* Constrain timeline inside breakout while allowing it to be wider than .container */
+.breakout .timeline{
+  width:100%;
+  max-width:1300px;
+  margin:0 auto;
+  box-sizing:border-box;
+  /* keep a small inner gap so ticks/edges don't touch viewport */
+  padding:0 12px;
+  overflow:hidden;
+}
+
+/* Align ticks with the timeline edges inside breakout */
+.breakout > .ticks, .breakout > #timeline-ticks{
+  max-width:1300px;
+  margin:0 auto;
+  padding:0 12px;
+  box-sizing:border-box;
+}
+
+.breakout .player-wrap{
+  /* ensure player-wrap centers its child even in wide viewports */
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  box-sizing:border-box;
+  padding:0 12px;
+}
+
+.player-wrap .video-player{
+  /* ensure the video element keeps centered with auto margins */
+  margin:0 auto;
+  display:block;
+}
+
+#inline-player {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 95vw;
+  aspect-ratio: 16/9;
+  margin: 12px 0;
+  display: block;
+}
