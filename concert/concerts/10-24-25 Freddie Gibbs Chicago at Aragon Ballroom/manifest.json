@@ -1,0 +1,11 @@
+{
+  "concert": "10-24-25 Freddie Gibbs Chicago at Aragon Ballroom",
+  "generated_at": "2025-10-27T04:31:10.108434Z",
+  "users": [
+    {
+      "username": "pelham",
+      "displayName": "Pelham",
+      "manifestPath": "./videos/pelham/index.json"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
-Username,Password,Name,Email,PhoneNumber,Height,Birthday,City,State,NumberOfConcerts
-"pelham","Chrissy","Pelham Bergesen","pbergesen22@gmail.com","615-480-6855","6'0","05/10/2002","Madison","WI",2
-"Future","Billie","Sophia Castillo","sophiamcastillo@gmail.com","","5'7","05/21/2002","Milwaukee","WI",1
+Username,Password,Name,Email,PhoneNumber,Height,Birthday,City,State,NumberOfConcerts,Color
+"pelham","Chrissy","Pelham Bergesen","pbergesen22@gmail.com","615-480-6855","6'0","05/10/2002","Madison","WI",2,"#ff5f6d"
+"future","Billie","Sophia Castillo","sophiamcastillo@gmail.com","","5'7","05/21/2002","Milwaukee","WI",1,"#ffc371"
+"ethan","JJ","Ethan Stanley","ethan.stanley@gmail.com","262-930-1234","5'11","08/15/2001","Madison","WI",1,"#8fd3f4"

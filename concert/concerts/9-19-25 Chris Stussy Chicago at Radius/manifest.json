@@ -1,0 +1,21 @@
+{
+  "concert": "9-19-25 Chris Stussy Chicago at Radius",
+  "generated_at": "2025-10-27T04:21:51.560975Z",
+  "users": [
+    {
+      "username": "ethan",
+      "displayName": "Ethan",
+      "manifestPath": "./videos/ethan/index.json"
+    },
+    {
+      "username": "future",
+      "displayName": "Future",
+      "manifestPath": "./videos/future/index.json"
+    },
+    {
+      "username": "pelham",
+      "displayName": "Pelham",
+      "manifestPath": "./videos/pelham/index.json"
+    }
+  ]
+}
