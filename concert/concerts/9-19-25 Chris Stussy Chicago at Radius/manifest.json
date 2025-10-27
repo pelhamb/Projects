@@ -1,6 +1,6 @@
 {
   "concert": "9-19-25 Chris Stussy Chicago at Radius",
-  "generated_at": "2025-10-27T04:21:51.560975Z",
+  "generated_at": "2025-10-27T05:48:45.920937Z",
   "users": [
     {
       "username": "ethan",
@@ -17,5 +17,16 @@
       "displayName": "Pelham",
       "manifestPath": "./videos/pelham/index.json"
     }
-  ]
+  ],
+  "coverage": {
+    "show_duration_seconds": 10187.403990983963,
+    "show_duration_formatted": "02:49:47",
+    "video_content_seconds": 680.056247,
+    "video_content_formatted": "00:11:20",
+    "coverage_percentage": 6.7,
+    "earliest_video_start": "2025-09-20T00:12:37",
+    "latest_video_end": "2025-09-20T03:02:24.403991",
+    "total_videos": 35,
+    "users_with_videos": 3
+  }
 }

@@ -1,11 +1,22 @@
 {
   "concert": "10-24-25 Freddie Gibbs Chicago at Aragon Ballroom",
-  "generated_at": "2025-10-27T04:31:10.108434Z",
+  "generated_at": "2025-10-27T05:48:56.025793Z",
   "users": [
     {
       "username": "pelham",
       "displayName": "Pelham",
       "manifestPath": "./videos/pelham/index.json"
     }
-  ]
+  ],
+  "coverage": {
+    "show_duration_seconds": 6797.959266901016,
+    "show_duration_formatted": "01:53:17",
+    "video_content_seconds": 711.90841,
+    "video_content_formatted": "00:11:51",
+    "coverage_percentage": 10.5,
+    "earliest_video_start": "2025-10-24T20:33:28",
+    "latest_video_end": "2025-10-24T22:26:45.959267",
+    "total_videos": 12,
+    "users_with_videos": 1
+  }
 }

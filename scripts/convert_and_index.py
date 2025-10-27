@@ -211,6 +211,8 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
     print(f'\n=== Generating master manifest for {concert_dir} ===')
     
     users = []
+    all_videos = []  # Collect all videos across users for coverage calculation
+    
     for user_dir in user_dirs:
         username = user_dir.name
         index_path = user_dir / 'index.json'
@@ -224,10 +226,61 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
                 'displayName': display_name,
                 'manifestPath': f'./videos/{username}/index.json'
             })
+            
+            # Load and collect video data for coverage calculation
+            try:
+                with index_path.open('r', encoding='utf-8') as f:
+                    user_index = json.load(f)
+                    if 'videos' in user_index:
+                        all_videos.extend(user_index['videos'])
+            except Exception as e:
+                print(f'Warning: Could not read {index_path}: {e}')
     
     if not users:
         print('No user directories with indexes found')
         return False
+    
+    # Calculate video coverage from first to last video across all users
+    coverage = None
+    if all_videos:
+        # Filter videos with valid timestamps and durations
+        valid_videos = [v for v in all_videos if 'mtime' in v and 'duration' in v and v['duration'] is not None]
+        
+        if valid_videos:
+            # Find earliest start time and latest end time
+            earliest_start = min(v['mtime'] for v in valid_videos)
+            latest_video = max(valid_videos, key=lambda v: v['mtime'] + v['duration'])
+            latest_end = latest_video['mtime'] + latest_video['duration']
+            
+            # Calculate total show duration (time span)
+            total_show_duration_seconds = latest_end - earliest_start
+            
+            # Calculate total video content duration (sum of all video durations)
+            total_video_content_seconds = sum(v['duration'] for v in valid_videos)
+            
+            # Calculate coverage percentage
+            coverage_percentage = (total_video_content_seconds / total_show_duration_seconds * 100) if total_show_duration_seconds > 0 else 0
+            
+            # Convert durations to human-readable format
+            def format_duration(seconds):
+                hours = int(seconds // 3600)
+                minutes = int((seconds % 3600) // 60)
+                secs = int(seconds % 60)
+                return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+            
+            coverage = {
+                'show_duration_seconds': total_show_duration_seconds,
+                'show_duration_formatted': format_duration(total_show_duration_seconds),
+                'video_content_seconds': total_video_content_seconds,
+                'video_content_formatted': format_duration(total_video_content_seconds),
+                'coverage_percentage': round(coverage_percentage, 1),
+                'earliest_video_start': datetime.datetime.fromtimestamp(earliest_start).isoformat(),
+                'latest_video_end': datetime.datetime.fromtimestamp(latest_end).isoformat(),
+                'total_videos': len(valid_videos),
+                'users_with_videos': len([u for u in users if any(v.get('mtime') for v in all_videos)])
+            }
+            
+            print(f'✓ Calculated coverage: {coverage["show_duration_formatted"]} show duration, {coverage["video_content_formatted"]} video content ({coverage["coverage_percentage"]}% coverage, {len(valid_videos)} videos)')
     
     # Extract concert name from directory
     concert_name = concert_dir.name
@@ -238,11 +291,19 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
         'users': users
     }
     
+    # Add coverage data if available
+    if coverage:
+        master_manifest['coverage'] = coverage
+    
     target = concert_dir / 'manifest.json'
     with target.open('w', encoding='utf-8') as f:
         json.dump(master_manifest, f, indent=2)
     
     print(f'✓ Wrote master manifest {target} with {len(users)} users')
+    if coverage:
+        print(f'✓ Show coverage: {coverage["show_duration_formatted"]} total span')
+        print(f'✓ Video content: {coverage["video_content_formatted"]} actual footage ({coverage["coverage_percentage"]}% of show)')
+        print(f'✓ Time span: {coverage["earliest_video_start"]} to {coverage["latest_video_end"]}')
     return True
 
 

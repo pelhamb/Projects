@@ -144,6 +144,34 @@ class MultiUserTimelineRenderer {
     // Add multi-user class for proper styling
     this.timelineEl.classList.add('multi-user');
 
+    // Clear timeline
+    this.timelineEl.innerHTML = '';
+
+    // Add coverage display at the top
+    if (this.masterData && this.masterData.coverage) {
+      const coverageEl = document.createElement('div');
+      coverageEl.className = 'timeline-coverage';
+      coverageEl.style.cssText = `
+        text-align: center;
+        margin-bottom: 15px;
+        padding: 8px;
+        font-size: 16px;
+        background-color: transparent;
+        border-radius: 4px;
+      `;
+      
+      const coverage = this.masterData.coverage;
+      coverageEl.innerHTML = `
+        <span style="color: white;">Video Coverage: </span>
+        <span style="color: #4CAF50; font-weight: bold;">${coverage.coverage_percentage}%</span>
+        <span style="color: white; opacity: 0.8; font-size: 14px; margin-left: 10px;">
+          (${coverage.video_content_formatted} of ${coverage.show_duration_formatted})
+        </span>
+      `;
+      
+      this.timelineEl.appendChild(coverageEl);
+    }
+
     // Compute overall time range across all users
     let allVideos = [];
     this.users.forEach(user => {
@@ -168,9 +196,6 @@ class MultiUserTimelineRenderer {
     const minStart = Math.min(...starts);
     const maxEnd = Math.max(...ends);
     const total = maxEnd - minStart;
-
-    // Clear timeline
-    this.timelineEl.innerHTML = '';
 
     // Create user timeline rows
     this.users.forEach((user, userIndex) => {
