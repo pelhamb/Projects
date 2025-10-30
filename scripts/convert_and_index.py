@@ -198,7 +198,7 @@ def generate_index(videos_dir: Path, ffprobe_cmd: str | None = None):
             'duration': duration
         })
     
-    out = {'generated_at': datetime.datetime.utcnow().isoformat()+'Z', 'videos': items}
+    out = {'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat()+'Z', 'videos': items}
     target = videos_dir / 'index.json'
     with target.open('w', encoding='utf-8') as f:
         json.dump(out, f, indent=2)
@@ -212,6 +212,7 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
     
     users = []
     all_videos = []  # Collect all videos across users for coverage calculation
+    user_videos_map = {}  # Map username -> list of their videos
     
     for user_dir in user_dirs:
         username = user_dir.name
@@ -231,8 +232,10 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
             try:
                 with index_path.open('r', encoding='utf-8') as f:
                     user_index = json.load(f)
-                    if 'videos' in user_index:
-                        all_videos.extend(user_index['videos'])
+                    user_videos = user_index.get('videos', [])
+                    user_videos_map[username] = user_videos
+                    if user_videos:
+                        all_videos.extend(user_videos)
             except Exception as e:
                 print(f'Warning: Could not read {index_path}: {e}')
     
@@ -277,7 +280,7 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
                 'earliest_video_start': datetime.datetime.fromtimestamp(earliest_start).isoformat(),
                 'latest_video_end': datetime.datetime.fromtimestamp(latest_end).isoformat(),
                 'total_videos': len(valid_videos),
-                'users_with_videos': len([u for u in users if any(v.get('mtime') for v in all_videos)])
+                'users_with_videos': len([u for u in users if any(v.get('mtime') for v in user_videos_map.get(u['username'], []))])
             }
             
             print(f'✓ Calculated coverage: {coverage["show_duration_formatted"]} show duration, {coverage["video_content_formatted"]} video content ({coverage["coverage_percentage"]}% coverage, {len(valid_videos)} videos)')
@@ -287,7 +290,7 @@ def generate_master_manifest(concert_dir: Path, user_dirs: list):
     
     master_manifest = {
         'concert': concert_name,
-        'generated_at': datetime.datetime.utcnow().isoformat()+'Z',
+        'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat()+'Z',
         'users': users
     }
     
