@@ -1,0 +1,28 @@
+[
+  {
+    "video1_seek_time": 0.0,
+    "video2_seek_time": 31.089999999994408,
+    "timestamp_estimate": 31.0,
+    "audio_fine_tuning_ms": 89.99999999440789,
+    "absolute_precision_seconds": 31.089999999994408,
+    "sync_confidence": 0.8211000000011743,
+    "overlap_duration": 2.5509979724884033,
+    "precision_achieved_ms": 89.99999999440789,
+    "overlap_index": 1,
+    "video1_info": "ethan/IMG_1765.mp4",
+    "video2_info": "pelham/IMG_7367.mp4"
+  },
+  {
+    "video1_seek_time": 0.0,
+    "video2_seek_time": 4.18399999999491,
+    "timestamp_estimate": 5.0,
+    "audio_fine_tuning_ms": -816.00000000509,
+    "absolute_precision_seconds": 4.18399999999491,
+    "sync_confidence": 0.9429538461523388,
+    "overlap_duration": 5.63299298286438,
+    "precision_achieved_ms": 816.00000000509,
+    "overlap_index": 2,
+    "video1_info": "future/IMG_0215.mp4",
+    "video2_info": "pelham/IMG_7371.mp4"
+  }
+]

@@ -32,15 +32,29 @@ python scripts/simple_http_server.py --port 8000 --directory .
 - `videos/[user]/processed/`: Original MOV files moved here after conversion
 - `webcode/[concert-slug].html`: Auto-generated concert pages
 
-## Development Patterns
+## Development Guidelines
 
-**Video Processing**: Always use the main conversion script - it handles both single-user and multi-user concert structures automatically.
+### Code Modification Policy
+- **DO NOT modify existing files** unless explicitly requested to build/implement something
+- **Scripts/utilities belong in `scripts/` folder** - always place new Python files there
+- **Existing web interface** (`webcode/`) should not be touched without explicit request
+- **Concert player, timeline, CSS** are stable - don't modify unless asked to implement features
+- **When user is "ideating" or brainstorming** - create example/demo scripts in `scripts/` folder instead of modifying existing code
 
-**Testing Web Interface**: Use the custom HTTP server with range request support for proper video seeking.
+### Python Development
+- **All new Python scripts** go in `scripts/` folder
+- **Analysis/utility scripts** should be standalone and not modify existing functionality
+- **Audio analysis** dependencies in `scripts/audio_requirements.txt`
+- **Testing scripts** should have descriptive names like `test_audio_sync.py` or `demo_sequential_player.py`
 
-**File Timestamps**: Video conversion preserves original MOV file timestamps on converted MP4s for accurate timeline generation.
+### Video Processing
+- **Always use main conversion script** - handles both single-user and multi-user concert structures automatically
+- **Testing Web Interface**: User typically has the HTTP server running already - don't start the server, just reference URLs for testing
+- **File Timestamps**: Video conversion preserves original MOV file timestamps on converted MP4s for accurate timeline generation
 
-**Cross-Platform**: bashrunner handles Windows/Unix shell differences automatically. Scripts use forward slashes in paths (Python handles conversion).
+### Cross-Platform
+- **bashrunner** handles Windows/Unix shell differences automatically
+- **Scripts use forward slashes** in paths (Python handles conversion)
 
 ## Dependencies
 - Video: ffmpeg (for MOV→MP4 conversion)
@@ -48,7 +62,7 @@ python scripts/simple_http_server.py --port 8000 --directory .
 - Python: subprocess, json, pathlib, datetime (see `scripts/audio_requirements.txt` for audio analysis)
 - Visualization: vispy, numpy (for sungraph)
 
-### 1. less important, bashrunner Library (`bashrunner/`) and  4. SunGraph Visualization (`sungraph/`)
+### 1. bashrunner Library (`bashrunner/`) and 4. SunGraph Visualization (`sungraph/`)
 - 3D sun path visualization using vispy
 - Animated solar arc demonstration with numpy-generated elliptical paths
 - Cross-platform Python library for executing bash commands via subprocess
