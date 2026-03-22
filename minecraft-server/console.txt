@@ -1,0 +1,9 @@
+setInterval(() => {
+let btn3 = document.querySelector('button[aria-label="Create"]');
+if (btn3) {
+btn3.click();
+console.log("Clicked 'Create' at", new Date().toLocaleTimeString());
+} else {
+console.warn("'Create' button not found");
+}
+}, 2 * 60 * 1000); // 2 minutes = 120,000 milliseconds
