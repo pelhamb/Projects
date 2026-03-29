@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "synth/VoiceManager.h"
 
 //==============================================================================
 // Parameter IDs — single source of truth, used by both processor and editor
@@ -68,6 +69,9 @@ private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     juce::AudioProcessorValueTreeState apvts;
+
+    VoiceManager voiceManager;
+    int lastWaveformIndex { -1 };   // tracks waveform changes between blocks
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MySynthAudioProcessor)
 };

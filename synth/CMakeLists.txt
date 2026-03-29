@@ -5,6 +5,10 @@ project(MySynth VERSION 0.1.0)
 #   git submodule add https://github.com/juce-framework/JUCE.git
 add_subdirectory(JUCE)
 
+if(NOT DEFINED MILESTONE)
+    set(MILESTONE 1)
+endif()
+
 juce_add_plugin(MySynth
     COMPANY_NAME "Valhalla"
     PLUGIN_MANUFACTURER_CODE Vlhl
@@ -13,7 +17,7 @@ juce_add_plugin(MySynth
     IS_SYNTH TRUE
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
-    PRODUCT_NAME "Synthphia1"
+    PRODUCT_NAME "Synthphia${MILESTONE}"
 )
 
 target_sources(MySynth PRIVATE

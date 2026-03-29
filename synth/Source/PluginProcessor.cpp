@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "synth/ADSRParameters.h"
 
 //==============================================================================
 MySynthAudioProcessor::MySynthAudioProcessor()
@@ -52,10 +53,12 @@ MySynthAudioProcessor::createParameterLayout()
 }
 
 //==============================================================================
-void MySynthAudioProcessor::prepareToPlay (double /*sampleRate*/, int /*samplesPerBlock*/)
+void MySynthAudioProcessor::prepareToPlay (double sampleRate, int /*samplesPerBlock*/)
 {
-    // Milestone 1: no audio engine to prepare yet.
-    // Milestone 2 will initialise the VoiceManager here.
+    voiceManager.prepare (sampleRate);
+
+    // Force waveform to re-sync on next block (sample rate may have changed).
+    lastWaveformIndex = -1;
 }
 
 void MySynthAudioProcessor::releaseResources()
@@ -79,13 +82,31 @@ bool MySynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 
 //==============================================================================
 void MySynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
-                                          juce::MidiBuffer& /*midiMessages*/)
+                                          juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
 
-    // Milestone 1: output silence.
-    // Milestone 2 will hand the buffer + midiMessages to the VoiceManager.
-    buffer.clear();
+    // --- Waveform selector (change only when value differs) ------------------
+    const int waveformIndex = static_cast<int> (
+        apvts.getRawParameterValue (ParamID::Waveform)->load());
+
+    if (waveformIndex != lastWaveformIndex)
+    {
+        voiceManager.setWaveform (waveformIndex);
+        lastWaveformIndex = waveformIndex;
+    }
+
+    // --- Read ADSR parameters ------------------------------------------------
+    ADSRParameters adsrParams;
+    adsrParams.attack  = apvts.getRawParameterValue (ParamID::Attack)->load();
+    adsrParams.decay   = apvts.getRawParameterValue (ParamID::Decay)->load();
+    adsrParams.sustain = apvts.getRawParameterValue (ParamID::Sustain)->load();
+    adsrParams.release = apvts.getRawParameterValue (ParamID::Release)->load();
+
+    const float masterGain = apvts.getRawParameterValue (ParamID::MasterGain)->load();
+
+    // --- Render --------------------------------------------------------------
+    voiceManager.processBlock (buffer, midiMessages, adsrParams, masterGain);
 }
 
 //==============================================================================
