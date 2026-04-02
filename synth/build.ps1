@@ -105,9 +105,10 @@ Write-Host "Saved: $releaseDir\Synthphia${Milestone}.vst3" -ForegroundColor Gree
 # ── Git tag ───────────────────────────────────────────────────────────────────
 Write-Host ""
 Write-Host "Tagging git commit as '$tag' ..." -ForegroundColor Yellow
-git tag $tag 2>&1 | Out-Null
+git tag -d $tag 2>&1 | Out-Null   # delete existing tag if present (ignore error if absent)
+git tag $tag
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Tag '$tag' already exists - skipping." -ForegroundColor DarkYellow
+    Write-Host "WARNING: Could not create tag '$tag'." -ForegroundColor DarkYellow
 } else {
     Write-Host "Tagged: $tag" -ForegroundColor Green
 }
