@@ -1,6 +1,79 @@
 #include "PluginEditor.h"
 
 //==============================================================================
+// ADSRVisualizer implementation
+//==============================================================================
+void ADSRVisualizer::paint (juce::Graphics& g)
+{
+    const auto bounds = getLocalBounds().toFloat().reduced (4.0f);
+    const float w = bounds.getWidth();
+    const float h = bounds.getHeight();
+    const float x0 = bounds.getX();
+    const float y0 = bounds.getY();
+
+    // Dark sub-panel background
+    g.setColour (juce::Colour (0xff181825));
+    g.fillRoundedRectangle (bounds, 4.0f);
+
+    // Faint grid line at sustain level
+    g.setColour (juce::Colour (0xff313244));
+    g.drawHorizontalLine (static_cast<int> (y0 + h), x0, x0 + w);
+
+    // Read current parameter values
+    const float attack  = (float) attackSlider.getValue();   // 0.001 – 5.0 s
+    const float decay   = (float) decaySlider.getValue();    // 0.001 – 5.0 s
+    const float sustain = (float) sustainSlider.getValue();  // 0.0 – 1.0
+    const float release = (float) releaseSlider.getValue();  // 0.001 – 10.0 s
+
+    // Normalise time segments so they always fill the width nicely.
+    // Give sustain a fixed visual hold width (20 % of the graph).
+    const float sustainHold = 0.20f;
+    const float timeTotal = attack + decay + release;
+    const float timeFactor = (timeTotal > 0.0f) ? (1.0f - sustainHold) / timeTotal : 1.0f;
+
+    const float normA = attack  * timeFactor;
+    const float normD = decay   * timeFactor;
+    const float normR = release * timeFactor;
+
+    // Five key points:
+    //   P0 = start (0, 0 amplitude)
+    //   P1 = end of attack (attack, 1.0)
+    //   P2 = end of decay  (attack+decay, sustain)
+    //   P3 = end of sustain hold (attack+decay+hold, sustain)
+    //   P4 = end of release (1.0, 0)
+    auto toScreen = [&](float nx, float ny) -> juce::Point<float>
+    {
+        return { x0 + nx * w, y0 + (1.0f - ny) * h };
+    };
+
+    const auto p0 = toScreen (0.0f, 0.0f);
+    const auto p1 = toScreen (normA, 1.0f);
+    const auto p2 = toScreen (normA + normD, sustain);
+    const auto p3 = toScreen (normA + normD + sustainHold, sustain);
+    const auto p4 = toScreen (normA + normD + sustainHold + normR, 0.0f);
+
+    // Draw envelope line
+    juce::Path envelope;
+    envelope.startNewSubPath (p0);
+    envelope.lineTo (p1);
+    envelope.lineTo (p2);
+    envelope.lineTo (p3);
+    envelope.lineTo (p4);
+
+    g.setColour (juce::Colour (0xff89b4fa));
+    g.strokePath (envelope, juce::PathStrokeType (2.0f));
+
+    // Draw dots at the four ADSR control points (p1–p4)
+    const float dotRadius = 4.0f;
+    g.setColour (juce::Colour (0xffcba6f7));   // purple accent for dots
+    for (auto& pt : { p1, p2, p3, p4 })
+        g.fillEllipse (pt.x - dotRadius, pt.y - dotRadius,
+                       dotRadius * 2.0f, dotRadius * 2.0f);
+}
+
+//==============================================================================
+// Editor implementation
+//==============================================================================
 MySynthAudioProcessorEditor::MySynthAudioProcessorEditor (MySynthAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
@@ -37,6 +110,10 @@ MySynthAudioProcessorEditor::MySynthAudioProcessorEditor (MySynthAudioProcessor&
         apvts, ParamID::Release, releaseSlider);
 
     //==========================================================================
+    // ADSR visualizer
+    addAndMakeVisible (adsrVisualizer);
+
+    //==========================================================================
     // Master gain & tuning (rotary)
     setupSlider (masterGainKnob, masterGainLabel, "Volume");
     setupSlider (tuningKnob,     tuningLabel,     "Tuning");
@@ -47,7 +124,7 @@ MySynthAudioProcessorEditor::MySynthAudioProcessorEditor (MySynthAudioProcessor&
         apvts, ParamID::Tuning, tuningKnob);
 
     //==========================================================================
-    setSize (520, 300);
+    setSize (520, 380);
 }
 
 MySynthAudioProcessorEditor::~MySynthAudioProcessorEditor() {}
@@ -59,7 +136,7 @@ void MySynthAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colour (0xff89b4fa));  // accent blue
     g.setFont (juce::Font (16.0f, juce::Font::bold));
-    g.drawFittedText ("Synthphia1", getLocalBounds().removeFromTop (28),
+    g.drawFittedText (JucePlugin_Name, getLocalBounds().removeFromTop (28),
                       juce::Justification::centred, 1);
 
     // Section labels
@@ -103,6 +180,13 @@ void MySynthAudioProcessorEditor::resized()
     placeAdsr (decaySlider,   decayLabel,   1);
     placeAdsr (sustainSlider, sustainLabel, 2);
     placeAdsr (releaseSlider, releaseLabel, 3);
+
+    //--------------------------------------------------------------------------
+    // ADSR visualizer graph (below the sliders)
+    const int graphH = 80;
+    const int graphW = 4 * sliderSpacing;                 // same width as the 4 sliders
+    const int graphY = topOffset + labelH + 4 + sliderH + labelH + 8;
+    adsrVisualizer.setBounds (adsrStartX, graphY, graphW, graphH);
 
     //--------------------------------------------------------------------------
     // Master gain + tuning knobs (right column)
