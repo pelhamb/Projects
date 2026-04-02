@@ -463,6 +463,18 @@ The compiled `.vst3` will appear in `build/MySynth_artefacts/VST3/`.
 
 ---
 
+## Version Naming Convention
+
+> **IMPORTANT — do this with every milestone build:**
+> The plugin displays as **Synthphia*N*** where *N* is the milestone number. The product name is driven by the `MILESTONE` CMake variable (see `CMakeLists.txt` line `PRODUCT_NAME "Synthphia${MILESTONE}"`). All user-facing text **must** reference `JucePlugin_Name` (the macro JUCE generates from `PRODUCT_NAME`) rather than hard-coding a version string. When building a new milestone, pass `-DMILESTONE=N` to CMake and verify:
+> 1. The DAW window title / instrument slot shows **Synthphia*N***
+> 2. The plugin GUI header shows **Synthphia*N***
+> 3. The archived `.vst3` artifact is named **Synthphia*N*.vst3**
+>
+> If any of these still show an old version number, find and replace the hard-coded string with the `JucePlugin_Name` macro or the `$Milestone` PowerShell variable as appropriate.
+
+---
+
 ## Implementation Priorities & Roadmap
 
 ### Milestone 1 — Structural Shell (No Audio)
