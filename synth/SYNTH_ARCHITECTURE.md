@@ -465,12 +465,17 @@ The compiled `.vst3` will appear in `build/MySynth_artefacts/VST3/`.
 
 ## Version Naming Convention
 
-### Where version strings live — change ALL of these each milestone
+### Milestone vs Version
+
+- **Milestone** — internal dev tracking (Milestone 1, 2, 3...). Used in the build script (`-Milestone N`), artifact name (`Synthphia4.vst3`), and git tags.
+- **Version** — what shows in the plugin GUI (`Synthphia - Version N`). Increments independently. Change it in `PluginEditor.cpp` each time the user-facing build changes.
+
+### Where version strings live — change ALL of these each build
 
 | File | Location | What to change |
 |------|----------|----------------|
 | `CMakeLists.txt` | `set(MILESTONE N)` (default fallback, ~line 9) | Change `N` to the new milestone number |
-| `Source/PluginEditor.cpp` | `paint()` function — `g.drawFittedText(...)` (~line 139) | Change the hardcoded string e.g. `"Synthphia - Milestone 4"` |
+| `Source/PluginEditor.cpp` | `paint()` function — `g.drawFittedText(...)` (~line 139) | Change the hardcoded string e.g. `"Synthphia - Version 4"` |
 
 > **Why hardcode the string in PluginEditor.cpp instead of using `JucePlugin_Name`?**
 > `JucePlugin_Name` is defined in the generated `JuceHeader.h` and depends on CMake regenerating that file and MSBuild recompiling `PluginEditor.cpp`. In practice the incremental build cache can serve a stale `.obj` that embeds the old name even when `-DMILESTONE=N` was passed correctly. A hardcoded string in `PluginEditor.cpp` guarantees the file is marked dirty and recompiled. Use `JucePlugin_Name` only if you are doing a full clean build every time.
