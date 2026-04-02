@@ -136,7 +136,7 @@ void MySynthAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colour (0xff89b4fa));  // accent blue
     g.setFont (juce::Font (16.0f, juce::Font::bold));
-    g.drawFittedText (JucePlugin_Name, getLocalBounds().removeFromTop (28),
+    g.drawFittedText ("Synthphia - Milestone 4", getLocalBounds().removeFromTop (28),
                       juce::Justification::centred, 1);
 
     // Section labels
