@@ -6,7 +6,7 @@ project(MySynth VERSION 0.1.0)
 add_subdirectory(JUCE)
 
 if(NOT DEFINED MILESTONE)
-    set(MILESTONE 1)
+    set(MILESTONE 2)
 endif()
 
 juce_add_plugin(MySynth
