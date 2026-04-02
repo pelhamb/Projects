@@ -465,13 +465,42 @@ The compiled `.vst3` will appear in `build/MySynth_artefacts/VST3/`.
 
 ## Version Naming Convention
 
-> **IMPORTANT — do this with every milestone build:**
-> The plugin displays as **Synthphia*N*** where *N* is the milestone number. The product name is driven by the `MILESTONE` CMake variable (see `CMakeLists.txt` line `PRODUCT_NAME "Synthphia${MILESTONE}"`). All user-facing text **must** reference `JucePlugin_Name` (the macro JUCE generates from `PRODUCT_NAME`) rather than hard-coding a version string. When building a new milestone, pass `-DMILESTONE=N` to CMake and verify:
-> 1. The DAW window title / instrument slot shows **Synthphia*N***
-> 2. The plugin GUI header shows **Synthphia*N***
-> 3. The archived `.vst3` artifact is named **Synthphia*N*.vst3**
->
-> If any of these still show an old version number, find and replace the hard-coded string with the `JucePlugin_Name` macro or the `$Milestone` PowerShell variable as appropriate.
+### Where version strings live — change ALL of these each milestone
+
+| File | Location | What to change |
+|------|----------|----------------|
+| `CMakeLists.txt` | `set(MILESTONE N)` (default fallback, ~line 9) | Change `N` to the new milestone number |
+| `Source/PluginEditor.cpp` | `paint()` function — `g.drawFittedText(...)` (~line 139) | Change the hardcoded string e.g. `"Synthphia - Milestone 4"` |
+
+> **Why hardcode the string in PluginEditor.cpp instead of using `JucePlugin_Name`?**
+> `JucePlugin_Name` is defined in the generated `JuceHeader.h` and depends on CMake regenerating that file and MSBuild recompiling `PluginEditor.cpp`. In practice the incremental build cache can serve a stale `.obj` that embeds the old name even when `-DMILESTONE=N` was passed correctly. A hardcoded string in `PluginEditor.cpp` guarantees the file is marked dirty and recompiled. Use `JucePlugin_Name` only if you are doing a full clean build every time.
+
+### Clean build procedure (required when changing milestone)
+
+```powershell
+cd C:\Users\pberg\VSCoding\synth
+Remove-Item -Recurse -Force build
+.\build.ps1 -Milestone N
+```
+
+The compiled artifact lands at:
+```
+C:\Users\pberg\VSCoding\synth\releases\milestone-N\SynthphiaN.vst3
+```
+
+Copy it to the Ableton VST scan folder:
+```
+C:\Users\pberg\Desktop\Ableton Files\plugins\
+```
+Both the VST2 and VST3 scan paths in Ableton point here. Ableton scans recursively so no subfolder is required. After copying, rescan in **Preferences → Plug-ins**.
+
+### Milestone build history
+
+| Milestone | Commit | Key changes |
+|-----------|--------|-------------|
+| 1 | `02ab7f5` | Structural shell — plugin loads in Ableton, no audio |
+| 2 | `c7bf35b` / `fb05ed4` | Sine voice, ADSR envelope, ADSR GUI sliders + visualizer, version label switched from hardcoded `"Synthphia1"` to `JucePlugin_Name`, build.ps1 success message fixed from hardcoded `Synthphia1.vst3` to `Synthphia${Milestone}.vst3` |
+| 4 | `5d8628e` | Version label hardcoded to `"Synthphia - Milestone 4"` in `PluginEditor.cpp::paint()` to bypass build cache issue; confirmed ADSR GUI visible in Ableton |
 
 ---
 
