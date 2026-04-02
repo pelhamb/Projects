@@ -86,7 +86,7 @@ Write-Host ""
 
 # ── Configure ─────────────────────────────────────────────────────────────────
 Write-Host "Configuring..." -ForegroundColor Yellow
-& $cmake -B build -G $generator -A x64 -DMILESTONE=$Milestone
+& $cmake -B build -G $generator -A x64 "-DMILESTONE=$Milestone"
 if ($LASTEXITCODE -ne 0) { Write-Host "Configure failed." -ForegroundColor Red; exit 1 }
 
 # ── Build ─────────────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ Write-Host ""
 Write-Host "Archiving artifact to $releaseDir ..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 Copy-Item -Recurse -Force $artifactSrc $releaseDir
-Write-Host "Saved: $releaseDir\Synthphia1.vst3" -ForegroundColor Green
+Write-Host "Saved: $releaseDir\Synthphia${Milestone}.vst3" -ForegroundColor Green
 
 # ── Git tag ───────────────────────────────────────────────────────────────────
 Write-Host ""

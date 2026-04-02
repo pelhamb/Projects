@@ -4,6 +4,29 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
+// Small component that draws a live ADSR envelope shape with four dots
+// connected by lines.  It reads the current slider values each paint() call.
+class ADSRVisualizer : public juce::Component,
+                       public juce::Timer
+{
+public:
+    ADSRVisualizer (juce::Slider& a, juce::Slider& d,
+                    juce::Slider& s, juce::Slider& r)
+        : attackSlider (a), decaySlider (d),
+          sustainSlider (s), releaseSlider (r)
+    {
+        startTimerHz (30);   // repaint at 30 fps so dots track sliders smoothly
+    }
+
+    void timerCallback() override { repaint(); }
+
+    void paint (juce::Graphics& g) override;
+
+private:
+    juce::Slider &attackSlider, &decaySlider, &sustainSlider, &releaseSlider;
+};
+
+//==============================================================================
 class MySynthAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
@@ -32,6 +55,11 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
+
+    //==========================================================================
+    // ADSR visualizer graph
+    ADSRVisualizer adsrVisualizer { attackSlider, decaySlider,
+                                    sustainSlider, releaseSlider };
 
     //==========================================================================
     // Master gain & tuning
